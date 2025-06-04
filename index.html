@@ -234,13 +234,13 @@
         <label for="name">Name: <input type="text" name="name" id="name" required> </label>
         <label for="email">Email: <input type="email" name="email" id="email" required> </label>
         <input type="hidden" id="userId">
-        <button type="submit" id="submitButton">Add User</button>
-        <button type="button" id="cancelEdit" style="display: none; background-color: #6c757d;">Cancel Edit</button>
+        <button type="submit" id="submitButton"><span>Add</span></button>
+        <button type="button" id="cancelEdit" style="display: none; background-color: #6c757d;"><span>Cancel Edit</span></button>
     </form>
 
     <div class="crud-section">
         <h2>User List</h2>
-        <button id="refreshUsers">Refresh List</button>
+        <button id="refreshUsers"><span>Refresh List</span></button>
         <div class="user-list" id="userList"></div>
     </div>
 
