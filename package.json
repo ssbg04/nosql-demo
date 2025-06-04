@@ -1,7 +1,8 @@
 {
   "name": "nosql-demo",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "api/index.js",
+  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "start": "node api/index.js"
@@ -12,7 +13,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "firebase-admin": "^13.4.0"
+    "firebase-admin": "^13.4.0",
+    "serverless-http": "^3.2.0",
+    "dotenv": "^16.4.5"
   },
   "description": ""
 }
