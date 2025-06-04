@@ -511,9 +511,11 @@
         function resetFormState() {
             isEditing = false;
             currentEditId = null;
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('userId').value = '';
             submitText.textContent = 'Add User';
             cancelEdit.style.display = 'none';
-            document.getElementById('userId').value = '';
         }
 
         // Display users
