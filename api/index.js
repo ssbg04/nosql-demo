@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./firebase-config');
 require("dotenv").config();
+require("serverless-http");
 const admin = require("firebase-admin");
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -121,3 +122,6 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`✅ Server running at http://localhost:${PORT}`);
 });
+
+module.exports = app;
+moudle.exports.handler = serverless(app);
