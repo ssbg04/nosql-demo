@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase CRUD App</title>
     <style>
-        body{
+        body {
             font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
@@ -17,16 +17,16 @@
             box-sizing: border-box;
         }
 
-        h1{
+        h1 {
             color: #333;
             margin-bottom: 30px;
             font-size: 2.5em;
             text-align: center;
         }
 
-        form{
+        form {
             background-color: #ffffff;
-            padding:  40px;
+            padding: 40px;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             display: flex;
@@ -37,7 +37,7 @@
             box-sizing: border-box;
         }
 
-        label{
+        label {
             font-size: 1.1em;
             color: #555;
             display: flex;
@@ -46,7 +46,7 @@
         }
 
         input[type="text"],
-        input[type="email"]{
+        input[type="email"] {
             padding: 12px 15px;
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -57,13 +57,13 @@
         }
 
         input[type="text"]:focus,
-        input[type="email"]:focus{
+        input[type="email"]:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
 
-        button{
+        button {
             background-color: #007bff;
             color: white;
             padding: 15px 25px;
@@ -75,17 +75,17 @@
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
 
-        button:hover{
+        button:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
         }
 
-        button:active{
+        button:active {
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
         }
 
-        .modal-overlay{
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -101,12 +101,12 @@
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .modal-overlay.visible{
+        .modal-overlay.visible {
             opacity: 1;
             visibility: visible;
         }
 
-        .modal-content{
+        .modal-content {
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -118,16 +118,16 @@
             transition: transform 0.3s ease;
         }
 
-        .modal-overlay.visible .modal-content{
+        .modal-overlay.visible .modal-content {
             transform: translateY(0);
         }
 
-        .modal-content h2{
+        .modal-content h2 {
             margin-top: 0;
             color: #666;
         }
         
-        .modal-content button{
+        .modal-content button {
             background-color: #007bff;
             color: white;
             padding: 10px 20px;
@@ -137,7 +137,7 @@
             font-size: 1em;
         }
 
-        .modal-content button:hover{
+        .modal-content button:hover {
             background-color: #0056b3;
         }
 
@@ -190,12 +190,8 @@
         }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
-    <!-- Add Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
 <body>
-
     <h1>User Management</h1>
     <form id="userForm" action="">
         <label for="name">Name: <input type="text" name="name" id="name" required> </label>
@@ -219,28 +215,40 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { 
+            getDatabase, 
+            ref, 
+            push, 
+            set, 
+            onValue, 
+            update, 
+            remove,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+
         // Your web app's Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyDoRv9_xpy19uoyVRVEjGYB-Ckr3ZyruTE",
-          authDomain: "nosql-demo-bd597.firebaseapp.com",
-          databaseURL: "https://nosql-demo-bd597-default-rtdb.firebaseio.com", // Updated
-          projectId: "nosql-demo-bd597",
-          storageBucket: "nosql-demo-bd597.firebasestorage.app", // Corrected
-          messagingSenderId: "813176623239",
-          appId: "1:813176623239:web:aa855f2e3fe29dfc3ca822"
+            apiKey: "AIzaSyDoRv9_xpy19uoyVRVEjGYB-Ckr3ZyruTE",
+            authDomain: "nosql-demo-bd597.firebaseapp.com",
+            databaseURL: "https://nosql-demo-bd597-default-rtdb.firebaseio.com",
+            projectId: "nosql-demo-bd597",
+            storageBucket: "nosql-demo-bd597.appspot.com",
+            messagingSenderId: "813176623239",
+            appId: "1:813176623239:web:aa855f2e3fe29dfc3ca822"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const usersRef = database.ref('users');
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const usersRef = ref(database, 'users');
 
         // Modal functions
-        function showCustomAlert(title, message){
+        function showCustomAlert(title, message) {
             const modal = document.getElementById('customAlertModal');
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
             modal.classList.add('visible');
         }
 
@@ -263,24 +271,22 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             
+            const userData = {
+                name,
+                email,
+                updatedAt: serverTimestamp()
+            };
+
             try {
                 if (isEditing) {
                     // Update existing user
-                    await usersRef.child(currentEditId).update({
-                        name: name,
-                        email: email,
-                        updatedAt: firebase.database.ServerValue.TIMESTAMP
-                    });
+                    await update(ref(database, `users/${currentEditId}`), userData);
                     showCustomAlert('✅ Success!', 'User updated successfully!');
                 } else {
                     // Create new user
-                    const newUserRef = usersRef.push();
-                    await newUserRef.set({
-                        name: name,
-                        email: email,
-                        createdAt: firebase.database.ServerValue.TIMESTAMP,
-                        updatedAt: firebase.database.ServerValue.TIMESTAMP
-                    });
+                    userData.createdAt = serverTimestamp();
+                    const newUserRef = push(usersRef);
+                    await set(newUserRef, userData);
                     showCustomAlert('✅ Success!', `User created with ID: ${newUserRef.key}`);
                 }
                 form.reset();
@@ -296,9 +302,7 @@
 
         // Refresh user list
         refreshButton.addEventListener('click', () => {
-            usersRef.once('value').then(snapshot => {
-                displayUsers(snapshot.val());
-            });
+            loadUsers();
         });
 
         // Reset form to "add" state
@@ -308,8 +312,6 @@
             submitButton.textContent = 'Add User';
             cancelEdit.style.display = 'none';
             document.getElementById('userId').value = '';
-            document.getElementById('name').value = '';
-            document.getElementById('email').value = '';
         }
 
         // Display users in the list
@@ -349,24 +351,34 @@
             });
         }
 
+        // Load users from Firebase
+        function loadUsers() {
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val();
+                console.log("Users loaded:", users);
+                displayUsers(users);
+            }, {
+                onlyOnce: true
+            });
+        }
+
         // Edit user
         async function editUser(id) {
             try {
-                const snapshot = await usersRef.child(id).once('value');
-                const user = snapshot.val();
-                
-                if (user) {
-                    document.getElementById('name').value = user.name;
-                    document.getElementById('email').value = user.email;
-                    document.getElementById('userId').value = id;
-                    
-                    isEditing = true;
-                    currentEditId = id;
-                    submitButton.textContent = 'Update User';
-                    cancelEdit.style.display = 'inline-block';
-                } else {
-                    throw new Error('User not found');
-                }
+                const userRef = ref(database, `users/${id}`);
+                onValue(userRef, (snapshot) => {
+                    const user = snapshot.val();
+                    if (user) {
+                        document.getElementById('name').value = user.name;
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('userId').value = id;
+                        
+                        isEditing = true;
+                        currentEditId = id;
+                        submitButton.textContent = 'Update User';
+                        cancelEdit.style.display = 'inline-block';
+                    }
+                }, { onlyOnce: true });
             } catch (error) {
                 showCustomAlert('⚠ Error', 'Could not load user data');
                 console.error('Edit user error:', error);
@@ -378,7 +390,7 @@
             if (!confirm('Are you sure you want to delete this user?')) return;
             
             try {
-                await usersRef.child(id).remove();
+                await remove(ref(database, `users/${id}`));
                 showCustomAlert('✅ Success!', 'User deleted successfully');
             } catch (error) {
                 showCustomAlert('⚠ Error', 'Could not delete user');
@@ -387,14 +399,12 @@
         }
 
         // Real-time listener for users
-        usersRef.on('value', (snapshot) => {
+        onValue(usersRef, (snapshot) => {
             displayUsers(snapshot.val());
         });
 
         // Initial load
-        usersRef.once('value').then(snapshot => {
-            displayUsers(snapshot.val());
-        });
+        loadUsers();
     </script>
 </body>
 </html>
