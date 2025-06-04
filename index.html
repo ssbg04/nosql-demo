@@ -229,19 +229,18 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
 </head>
 <body>
-    <!-- (Keep all your HTML the same) -->
     <h1>User Management</h1>
     <form id="userForm" action="">
         <label for="name">Name: <input type="text" name="name" id="name" required> </label>
         <label for="email">Email: <input type="email" name="email" id="email" required> </label>
         <input type="hidden" id="userId">
-        <button type="submit" id="submitButton"><span>Add User</span></button>
+        <button type="submit" id="submitButton">Add User</button>
         <button type="button" id="cancelEdit" style="display: none; background-color: #6c757d;">Cancel Edit</button>
     </form>
 
     <div class="crud-section">
         <h2>User List</h2>
-        <button id="refreshUsers"><span>Refresh List</span></button>
+        <button id="refreshUsers">Refresh List</button>
         <div class="user-list" id="userList"></div>
     </div>
 
@@ -264,6 +263,7 @@
             updateDoc,
             deleteDoc,
             onSnapshot,
+            getDoc,
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
 
@@ -282,7 +282,7 @@
         const db = getFirestore(app);
         const usersCollection = collection(db, "users");
 
-        // Modal functions (keep the same)
+        // Modal functions
         function showCustomAlert(title, message) {
             const modal = document.getElementById('customAlertModal');
             document.getElementById('modalTitle').textContent = title;
@@ -294,7 +294,7 @@
             document.getElementById('customAlertModal').classList.remove('visible');
         });
 
-        // DOM Elements (keep the same)
+        // DOM Elements
         const form = document.getElementById('userForm');
         const submitButton = document.getElementById('submitButton');
         const cancelEdit = document.getElementById('cancelEdit');
@@ -303,7 +303,7 @@
         let isEditing = false;
         let currentEditId = null;
 
-        // Form submission - Firestore version
+        // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -335,10 +335,13 @@
             }
         });
 
-        // Cancel edit (keep the same)
+        // Cancel edit
         cancelEdit.addEventListener('click', resetFormState);
 
-        // Reset form (keep the same)
+        // Refresh button
+        refreshButton.addEventListener('click', loadUsers);
+
+        // Reset form to "add" state
         function resetFormState() {
             isEditing = false;
             currentEditId = null;
@@ -347,7 +350,7 @@
             document.getElementById('userId').value = '';
         }
 
-        // Display users - Firestore version
+        // Display users
         function displayUsers(users) {
             userList.innerHTML = '';
             
@@ -367,8 +370,8 @@
                         <small>ID: ${doc.id}</small>
                     </div>
                     <div class="user-actions">
-                        <button class="edit" data-id="${doc.id}"><span>Edit</span></button>
-                        <button class="delete" data-id="${doc.id}"><span>Delete</span></button>
+                        <button class="edit" data-id="${doc.id}">Edit</button>
+                        <button class="delete" data-id="${doc.id}">Delete</button>
                     </div>
                 `;
                 userList.appendChild(userCard);
@@ -384,33 +387,43 @@
             });
         }
 
-        // Load users - Firestore version
+        // Load users
         async function loadUsers() {
-            const querySnapshot = await getDocs(usersCollection);
-            displayUsers(querySnapshot);
-        }
-
-        // Edit user - Firestore version
-        async function editUser(id) {
-            const userRef = doc(db, "users", id);
-            const userSnap = await getDoc(userRef);
-            
-            if (userSnap.exists()) {
-                const user = userSnap.data();
-                document.getElementById('name').value = user.name;
-                document.getElementById('email').value = user.email;
-                document.getElementById('userId').value = id;
-                
-                isEditing = true;
-                currentEditId = id;
-                submitButton.textContent = 'Update User';
-                cancelEdit.style.display = 'inline-block';
-            } else {
-                showCustomAlert('⚠ Error', 'User not found');
+            try {
+                const querySnapshot = await getDocs(usersCollection);
+                displayUsers(querySnapshot);
+            } catch (error) {
+                showCustomAlert('⚠ Error', 'Failed to load users');
+                console.error('Load users error:', error);
             }
         }
 
-        // Delete user - Firestore version
+        // Edit user - Fixed version
+        async function editUser(id) {
+            try {
+                const userRef = doc(db, "users", id);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    const user = userSnap.data();
+                    document.getElementById('name').value = user.name;
+                    document.getElementById('email').value = user.email;
+                    document.getElementById('userId').value = id;
+                    
+                    isEditing = true;
+                    currentEditId = id;
+                    submitButton.textContent = 'Update User';
+                    cancelEdit.style.display = 'inline-block';
+                } else {
+                    showCustomAlert('⚠ Error', 'User not found');
+                }
+            } catch (error) {
+                showCustomAlert('⚠ Error', 'Failed to load user data');
+                console.error('Edit user error:', error);
+            }
+        }
+
+        // Delete user
         async function deleteUser(id) {
             if (!confirm('Are you sure you want to delete this user?')) return;
             
@@ -423,16 +436,13 @@
             }
         }
 
-        // Real-time listener - Firestore version
+        // Real-time listener
         onSnapshot(usersCollection, (querySnapshot) => {
             displayUsers(querySnapshot);
         });
 
         // Initial load
         loadUsers();
-
-        // Refresh button
-        document.getElementById('refreshUsers').addEventListener('click', loadUsers);
     </script>
 </body>
 </html>
