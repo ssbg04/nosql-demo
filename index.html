@@ -590,20 +590,6 @@
             }
         }
 
-        // Reset form to "add" state
-        function resetFormState() {
-            isEditing = false;
-            currentEditId = null;
-            document.getElementById('name').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('userId').value = '';
-            submitText.textContent = 'Add User';
-            cancelEdit.style.display = 'none';
-        }
-        
-        // Cancel edit button event listener
-        cancelEdit.addEventListener('click', resetFormState);
-
         // Edit user
         async function editUser(id) {
             try {
@@ -620,6 +606,9 @@
                     currentEditId = id;
                     submitText.textContent = 'Update User';
                     cancelEdit.style.display = 'inline-block';
+                    
+                    // Scroll to form
+                    form.scrollIntoView({ behavior: 'smooth' });
                 } else {
                     showCustomAlert('⚠️ Error', 'User not found');
                 }
