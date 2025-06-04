@@ -5,252 +5,401 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Firestore CRUD App</title>
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #2b2d42;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
         
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         
         body {
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            padding: 20px;
             min-height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-            box-sizing: border-box;
         }
-
+        
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
         h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #4361ee, #3f37c9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             text-align: center;
+            margin: 1.5rem 0;
+            letter-spacing: -0.5px;
         }
-
-        form {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-top: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             width: 100%;
-            max-width: 450px;
-            box-sizing: border-box;
         }
-
+        
+        form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
         label {
-            font-size: 1.1em;
-            color: #555;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
         }
-
+        
         input[type="text"],
         input[type="email"] {
-            padding: 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1em;
             width: 100%;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            margin-top: 0.5rem;
         }
-
+        
         input[type="text"]:focus,
         input[type="email"]:focus {
-            border-color: #007bff;
+            border-color: var(--accent-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.25);
         }
-
-/*         button {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 25px;
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
             border: none;
-            border-radius: 10px;
-            font-size: 1.2em;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
         }
-
-        button:hover {
-            background-color: #0056b3;
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
             transform: translateY(-2px);
         }
-
-        button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
-        } */
-
-        /* From Uiverse.io by cssbuttons-io */ 
-/* From Uiverse.io by lenfear23 */ 
-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-  cursor: pointer;
-  width: 150px;
-  height: 50px;
-  background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
-  border-radius: 30px;
-  border: 1px solid #8F9092;
-  transition: all 0.2s ease;
-  font-family: "Source Sans Pro", sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #606060;
-  text-shadow: 0 1px #fff;
-}
-
-button:hover {
-  box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1;
-}
-
-button:active {
-  box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
-}
-
-button:focus {
-  box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
-}
-
-
-
-       
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e3176a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #3aa8d8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .crud-section {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .user-list {
+            margin-top: 1.5rem;
+        }
+        
+        .user-card {
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-card h3 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-card p {
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        .user-card small {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
         
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 100%;
-            background: rgba(0,0,0,0.6);
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: var(--transition);
         }
-
+        
         .modal-overlay.visible {
             opacity: 1;
             visibility: visible;
         }
-
+        
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
             max-width: 400px;
             width: 90%;
+            text-align: center;
             transform: translateY(-20px);
-            transition: transform 0.3s ease;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-
+        
         .modal-overlay.visible .modal-content {
             transform: translateY(0);
         }
-
+        
         .modal-content h2 {
-            margin-top: 0;
-            color: #666;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
         }
         
-        .modal-content button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
+        .modal-content p {
+            margin-bottom: 1.5rem;
         }
-
-        .modal-content button:hover {
-            background-color: #0056b3;
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            form {
+                padding: 1.5rem;
+            }
+            
+            .user-card {
+                padding: 1rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
         }
-
-        /* CRUD Operations Section */
-        .crud-section {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            width: 100%;
-            max-width: 800px;
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .crud-section {
+                padding: 1rem;
+            }
         }
-
-        .user-list {
-            margin-top: 20px;
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
+        
         .user-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            animation: fadeIn 0.3s ease-out forwards;
         }
-
-        .user-actions button {
-            padding: 8px 12px;
-            margin-left: 8px;
-            font-size: 0.9em;
+        
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
         }
-
-        .user-actions button.delete {
-            background-color: #dc3545;
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-
-        .user-actions button.delete:hover {
-            background-color: #c82333;
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
         }
-
-        .user-actions button.edit {
-            background-color: #ffc107;
-            color: #212529;
-        }
-
-        .user-actions button.edit:hover {
-            background-color: #e0a800;
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.6;
         }
     </style>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <h1>User Management</h1>
-    <form id="userForm" action="">
-        <label for="name">Name: <input type="text" name="name" id="name" required> </label>
-        <label for="email">Email: <input type="email" name="email" id="email" required> </label>
-        <input type="hidden" id="userId">
-        <button type="submit" id="submitButton"><span>Add</span></button>
-        <button type="button" id="cancelEdit" style="display: none; background-color: #6c757d;"><span>Cancel Edit</span></button>
-    </form>
-
-    <div class="crud-section">
-        <h2>User List</h2>
-        <button id="refreshUsers"><span>Refresh List</span></button>
-        <div class="user-list" id="userList"></div>
+    <div class="container">
+        <h1>User Management</h1>
+        
+        <form id="userForm">
+            <label for="name">
+                Name
+                <input type="text" name="name" id="name" required placeholder="Enter user name">
+            </label>
+            
+            <label for="email">
+                Email
+                <input type="email" name="email" id="email" required placeholder="Enter user email">
+            </label>
+            
+            <input type="hidden" id="userId">
+            
+            <div class="button-group">
+                <button type="submit" id="submitButton" class="btn-primary">
+                    <span id="submitText">Add User</span>
+                </button>
+                <button type="button" id="cancelEdit" class="btn-secondary" style="display: none;">
+                    Cancel
+                </button>
+            </div>
+        </form>
+        
+        <div class="crud-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <h2>User List</h2>
+                <button id="refreshUsers" class="btn-success">
+                    <i class="fas fa-sync-alt" style="margin-right: 8px;"></i>
+                    Refresh
+                </button>
+            </div>
+            
+            <div class="user-list" id="userList">
+                <!-- Users will be loaded here -->
+            </div>
+        </div>
     </div>
-
+    
     <div id="customAlertModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <p id="modalMessage"></p>
-            <button id="modalCloseButton">OK</button>
+            <h2 id="modalTitle">Title</h2>
+            <p id="modalMessage">Message</p>
+            <button id="modalCloseButton" class="btn-primary">OK</button>
         </div>
     </div>
 
@@ -299,6 +448,7 @@ button:focus {
         // DOM Elements
         const form = document.getElementById('userForm');
         const submitButton = document.getElementById('submitButton');
+        const submitText = document.getElementById('submitText');
         const cancelEdit = document.getElementById('cancelEdit');
         const userList = document.getElementById('userList');
         const refreshButton = document.getElementById('refreshUsers');
@@ -308,8 +458,18 @@ button:focus {
         // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name || !email) {
+                showCustomAlert('⚠️ Validation Error', 'Please fill in all fields');
+                return;
+            }
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitText.innerHTML = '<span class="spinner"></span> Processing...';
             
             const userData = {
                 name,
@@ -327,13 +487,17 @@ button:focus {
                     // Create new user
                     userData.createdAt = serverTimestamp();
                     const docRef = await addDoc(usersCollection, userData);
-                    showCustomAlert('✅ Success!', `User created with ID: ${docRef.id}`);
+                    showCustomAlert('🎉 User Created!', `New user added successfully!`);
                 }
                 form.reset();
                 resetFormState();
             } catch (error) {
-                showCustomAlert('⚠ Error', 'Operation failed');
+                showCustomAlert('⚠️ Error', 'Operation failed. Please try again.');
                 console.error('Firestore error:', error);
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                submitText.textContent = isEditing ? 'Update User' : 'Add User';
             }
         });
 
@@ -347,7 +511,7 @@ button:focus {
         function resetFormState() {
             isEditing = false;
             currentEditId = null;
-            submitButton.textContent = 'Add User';
+            submitText.textContent = 'Add User';
             cancelEdit.style.display = 'none';
             document.getElementById('userId').value = '';
         }
@@ -357,50 +521,76 @@ button:focus {
             userList.innerHTML = '';
             
             if (users.empty) {
-                userList.innerHTML = '<p>No users found</p>';
+                userList.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <h3>No Users Found</h3>
+                        <p>Add your first user using the form above</p>
+                    </div>
+                `;
                 return;
             }
 
             users.forEach((doc) => {
                 const user = doc.data();
+                const createdAt = user.createdAt?.toDate() || new Date();
+                const updatedAt = user.updatedAt?.toDate() || new Date();
+                
                 const userCard = document.createElement('div');
                 userCard.className = 'user-card';
                 userCard.innerHTML = `
-                    <div>
-                        <strong>${user.name}</strong>
-                        <p>${user.email}</p>
-                        <small>ID: ${doc.id}</small>
-                    </div>
+                    <h3>${user.name}</h3>
+                    <p><i class="fas fa-envelope" style="margin-right: 8px; color: #6c757d;"></i>${user.email}</p>
+                    <small>
+                        <i class="fas fa-id-card" style="margin-right: 5px;"></i>ID: ${doc.id}
+                    </small>
+                    <small style="display: block; margin-top: 8px;">
+                        <i class="fas fa-calendar-plus" style="margin-right: 5px;"></i>
+                        Created: ${createdAt.toLocaleDateString()}
+                    </small>
+                    <small style="display: block;">
+                        <i class="fas fa-calendar-check" style="margin-right: 5px;"></i>
+                        Updated: ${updatedAt.toLocaleDateString()}
+                    </small>
                     <div class="user-actions">
-                        <button class="edit" data-id="${doc.id}">Edit</button>
-                        <button class="delete" data-id="${doc.id}">Delete</button>
+                        <button class="btn-primary btn-sm edit" data-id="${doc.id}">
+                            <i class="fas fa-edit" style="margin-right: 5px;"></i>Edit
+                        </button>
+                        <button class="btn-danger btn-sm delete" data-id="${doc.id}">
+                            <i class="fas fa-trash-alt" style="margin-right: 5px;"></i>Delete
+                        </button>
                     </div>
                 `;
                 userList.appendChild(userCard);
             });
 
             // Add event listeners
-            document.querySelectorAll('.user-actions .edit').forEach(button => {
-                button.addEventListener('click', (e) => editUser(e.target.dataset.id));
+            document.querySelectorAll('.edit').forEach(button => {
+                button.addEventListener('click', (e) => editUser(e.currentTarget.dataset.id));
             });
 
-            document.querySelectorAll('.user-actions .delete').forEach(button => {
-                button.addEventListener('click', (e) => deleteUser(e.target.dataset.id));
+            document.querySelectorAll('.delete').forEach(button => {
+                button.addEventListener('click', (e) => deleteUser(e.currentTarget.dataset.id));
             });
         }
 
         // Load users
         async function loadUsers() {
             try {
+                refreshButton.innerHTML = '<span class="spinner"></span> Loading...';
                 const querySnapshot = await getDocs(usersCollection);
                 displayUsers(querySnapshot);
             } catch (error) {
-                showCustomAlert('⚠ Error', 'Failed to load users');
+                showCustomAlert('⚠️ Error', 'Failed to load users');
                 console.error('Load users error:', error);
+            } finally {
+                refreshButton.innerHTML = '<i class="fas fa-sync-alt" style="margin-right: 8px;"></i> Refresh';
             }
         }
 
-        // Edit user - Fixed version
+        // Edit user
         async function editUser(id) {
             try {
                 const userRef = doc(db, "users", id);
@@ -414,26 +604,41 @@ button:focus {
                     
                     isEditing = true;
                     currentEditId = id;
-                    submitButton.textContent = 'Update User';
+                    submitText.textContent = 'Update User';
                     cancelEdit.style.display = 'inline-block';
+                    
+                    // Scroll to form
+                    form.scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    showCustomAlert('⚠ Error', 'User not found');
+                    showCustomAlert('⚠️ Error', 'User not found');
                 }
             } catch (error) {
-                showCustomAlert('⚠ Error', 'Failed to load user data');
+                showCustomAlert('⚠️ Error', 'Failed to load user data');
                 console.error('Edit user error:', error);
             }
         }
 
         // Delete user
         async function deleteUser(id) {
-            if (!confirm('Are you sure you want to delete this user?')) return;
-            
             try {
-                await deleteDoc(doc(db, "users", id));
-                showCustomAlert('✅ Success!', 'User deleted successfully');
+                const userRef = doc(db, "users", id);
+                const userSnap = await getDoc(userRef);
+                
+                if (!userSnap.exists()) {
+                    showCustomAlert('⚠️ Error', 'User not found');
+                    return;
+                }
+                
+                const user = userSnap.data();
+                
+                if (!confirm(`Are you sure you want to delete ${user.name}? This action cannot be undone.`)) {
+                    return;
+                }
+                
+                await deleteDoc(userRef);
+                showCustomAlert('✅ Deleted!', 'User has been removed successfully.');
             } catch (error) {
-                showCustomAlert('⚠ Error', 'Could not delete user');
+                showCustomAlert('⚠️ Error', 'Could not delete user');
                 console.error('Delete error:', error);
             }
         }
