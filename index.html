@@ -347,6 +347,46 @@
             margin-bottom: 1rem;
             opacity: 0.6;
         }
+
+        .dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+        
+        .dark-mode .crud-section,
+        .dark-mode form {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark-mode .user-card {
+            background-color: #2d2d2d;
+            border-color: #444;
+        }
+        
+        .dark-mode input[type="text"],
+        .dark-mode input[type="email"] {
+            background-color: #333;
+            color: #f0f0f0;
+            border-color: #555;
+        }
+        
+        .dark-mode .modal-content {
+            background-color: #2d2d2d;
+            color: #f0f0f0;
+        }
+        
+        .dark-mode .empty-state {
+            color: #aaa;
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -356,6 +396,12 @@
 <body>
     <div class="container">
         <h1>User Management</h1>
+
+        <div class="dark-mode-toggle">
+            <button id="darkModeToggle">
+                <span id="darkModeIcon">🌙</span> Dark Mode
+            </button>
+        </div>
         
         <form id="userForm">
             <label for="name">
@@ -454,6 +500,32 @@
         const refreshButton = document.getElementById('refreshUsers');
         let isEditing = false;
         let currentEditId = null;
+
+        // Add this to your existing JavaScript
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        
+        // Check for saved user preference
+        if (localStorage.getItem('darkMode') {
+            document.body.classList.add('dark-mode');
+            darkModeIcon.textContent = '☀️';
+            darkModeToggle.textContent = ' Light Mode';
+        }
+        
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                darkModeIcon.textContent = '☀️';
+                darkModeToggle.textContent = ' Light Mode';
+            } else {
+                localStorage.removeItem('darkMode');
+                darkModeIcon.textContent = '🌙';
+                darkModeToggle.textContent = ' Dark Mode';
+            }
+        });
 
         // Form submission
         form.addEventListener('submit', async (e) => {
